@@ -32,6 +32,9 @@ chart_data = pd.DataFrame(np.random.randn(20, 3), columns=['a', 'b', 'c'])
 st.line_chart(chart_data)
 
 
+selected_threshold = st.slider('Select the threshold to apply?', 0, 130, 25)
+st.write('Threshold: ', selected_threshold)
+
 video_file1 = open('myvideo.mp4', 'rb')
 video_bytes1 = video_file1.read()
   
