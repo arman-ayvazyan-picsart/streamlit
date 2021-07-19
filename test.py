@@ -10,7 +10,7 @@ import time
 Here's our first attempt at using data to create a table:
 """
 
-values = st.slider('Select a range of values', 0.0, 100.0, (25.0, 75.0))
+values = st.slider('Select a range of values', 0.0, 100.0, 25.0)
 st.write('Values:', values)
 
 
