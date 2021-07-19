@@ -5,11 +5,14 @@ import numpy as np
 import pandas as pd
 import time
 
-st.title('My first app')
 """
 # My first app
 Here's our first attempt at using data to create a table:
 """
+
+values = st.slider('Select a range of values', 0.0, 100.0, (25.0, 75.0))
+st.write('Values:', values)
+
 
 df = pd.DataFrame({
   'first column': [1, 2, 3, 4],
