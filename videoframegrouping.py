@@ -6,13 +6,26 @@ import pandas as pd
 
 st.title('Video Frame Grouping Interactive Showcase')
 
+
+df = pd.DataFrame({
+  'first column': [1, 2, 3, 4],
+  'second column': [10, 20, 30, 40]
+})
+
+
 st.subheader('Method')
-selected_method = st.select_slider( 'Select the method', options=['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'], value='red')
-st.write('You selected method', selected_method)
+selected_method = st.selectbox(
+    'What method to use?',
+     df['first column'])
+
+'You selected: ', selected_method
 
 st.subheader('Video')
-selected_video = st.select_slider( 'Select the video', options=['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'], value='red')
-st.write('You selected video ', selected_video)
+selected_video = st.selectbox(
+    'Which video to process?',
+     df['first column'])
+
+'You selected: ', selected_video
 
 st.subheader('This is a subheader')
 chart_data = pd.DataFrame(np.random.randn(20, 3), columns=['a', 'b', 'c'])
