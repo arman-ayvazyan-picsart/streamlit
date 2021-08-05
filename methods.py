@@ -216,9 +216,9 @@ def group_extractor(input, groups, height, width, fps, output):
     prev_group = groups[0]
     fourcc = cv2.VideoWriter_fourcc('V', 'P', '8', '0')
     #fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-    #tempVideo = tempfile.NamedTemporaryFile(suffix='.webM')
+    tempVideo = tempfile.NamedTemporaryFile(suffix='.webM')
     #tempVideo.name
-    writer = cv2.VideoWriter(output, fourcc, fps, (width, height))
+    writer = cv2.VideoWriter(tempVideo.name, fourcc, fps, (width, height))
 
     for frame in video:
         i += 1
