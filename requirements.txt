@@ -1,4 +1,4 @@
 image-similarity-measures==0.3.5
 ImageHash==4.2.1
-opencv-python==4.5.2.54
+opencv-python-headless
 Pillow
