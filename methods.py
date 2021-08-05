@@ -231,6 +231,7 @@ def group_extractor(input, groups, height, width, fps, output):
             writer.write(frame)
         prev_group = groups[i]
     writer.release()
+    return tempVideo.name
 
 
 def method(video, threshold, minframes, method):
@@ -259,9 +260,9 @@ def method(video, threshold, minframes, method):
     merge_time = time.time() - start_time
 
     start_time = time.time()
-    group_extractor("./source/" + video, groups, width, height, fps, "./result/"+video.rstrip('.mp4/')+".webM")
+    output = group_extractor("./source/" + video, groups, width, height, fps, "./result/"+video.rstrip('.mp4/')+".webM")
     extract_time = time.time() - start_time
 
-    return norm_tm, groups, norm_tm_diff, (frames/fps, method_time, merge_time, extract_time)
+    return norm_tm, groups, norm_tm_diff, (frames/fps, method_time, merge_time, extract_time), output
 
 #_, _, _, _ = method("10000000_769221737104889_6896866277500076481_n.mp4", 80, 15, "Lab")

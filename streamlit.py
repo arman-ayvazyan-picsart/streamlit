@@ -35,7 +35,7 @@ with s1_col2:
 selected_threshold = st.slider('Select the threshold to apply. (all values in % s)', 0, 100, 80, 1)
 selected_min_clip_size = st.slider('Select the minimum frames per clip. (Shorter clips will be merged)', 0, 100, 15, 1)
 
-r1, r2, r3, times = method(selected_video, selected_threshold, selected_min_clip_size, selected_method)
+r1, r2, r3, times, output = method(selected_video, selected_threshold, selected_min_clip_size, selected_method)
 
 r0 = np.ones(r1.shape)*selected_threshold
 chart_data = pd.DataFrame(np.transpose(np.vstack((r0, r1))), columns=['Threshold', 'Method'])
@@ -57,7 +57,8 @@ with s3_col2:
 video_file1 = open("./source/"+selected_video, 'rb')
 video_bytes1 = video_file1.read()
 
-video_file2 = open("./result/"+selected_video.rstrip('.mp4')+".webM", 'rb')
+#video_file2 = open("./result/"+selected_video.rstrip('.mp4')+".webM", 'rb')
+video_file2 = open(output, 'rb')
 video_bytes2 = video_file2.read()
   
 st.subheader('Results:')
