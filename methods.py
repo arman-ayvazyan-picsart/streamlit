@@ -398,6 +398,7 @@ def video_stream(video, method_name, adaptive, window_size):
 
     return frame_ids, (video_duration, method_duration, thresholding_duration), frame_diff, groups
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-adaptive-threshold', type=bool, default=True,
