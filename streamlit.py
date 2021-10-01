@@ -16,8 +16,6 @@ st.set_page_config(
 )
 
 st.title('Frame Grouping - Interactive 2.0')
-
-source_video_list = [f for f in listdir("./source/") if isfile(join("./source/", f))]
 method_list = ["Main", "Light only"]
 
 s1_col1, s1_col2 = st.columns(2)
