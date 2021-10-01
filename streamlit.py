@@ -15,6 +15,8 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+st.title(f'My first app {st.__version__}')
+
 st.title('Frame Grouping - Interactive 2.0')
 method_list = ["Main", "Light only"]
 
