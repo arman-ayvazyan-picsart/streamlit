@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from os import listdir
 import streamlit as st
-from methods import video_file, video_stream
+from methods import video_stream
 from os.path import isfile, join
 
 
