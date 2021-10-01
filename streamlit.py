@@ -20,7 +20,7 @@ st.title('Frame Grouping - Interactive 2.0')
 source_video_list = [f for f in listdir("./source/") if isfile(join("./source/", f))]
 method_list = ["Main", "Light only"]
 
-s1_col1, s1_col2 = st.beta_columns(2)
+s1_col1, s1_col2 = st.columns(2)
 with s1_col1:
   st.subheader("Select Method")
   form_method = st.selectbox(
@@ -28,17 +28,15 @@ with s1_col1:
       method_list)
 
 with s1_col2:
-  st.subheader("Select Video")
-  form_video = st.selectbox(
-      'Which video to process?',
-      source_video_list)
+  st.subheader("Upload a video")
+  uploaded_file = st.file_uploader("Which video to process?")
 
-uploaded_file = st.file_uploader("Or upload a custom video")
-
-form_adaptive = st.checkbox("Apply adaptive threshold")
+form_adaptive = st.checkbox("Apply adaptive threshold", value=True)
 if not form_adaptive:
-    form_threshold = st.slider('Select the threshold to apply. (all values in % s)', 0, 100, 80, 1)
-form_sliding_window = st.slider('Select the minimum frames per clip. (Shorter clips will be merged)', 0, 100, 15, 1)
+    form_manual = st.checkbox("Manually define the threshold?", value=False)
+    if form_manual:
+        form_threshold = st.slider('Select the threshold to apply. (all values in % s)', 0.0, 100.0, 99.0, 0.01)
+form_sliding_window = st.slider('Select the minimum frames per clip. (Shorter clips will be merged)', 0, 100, 60, 1)
 
 #stframe = st.empty()
 #stframe.image(gray)
@@ -55,15 +53,17 @@ if st.button('Start the process'):
 
     st.subheader('Results:')
 
-    '- **Video: **', form_video
     '- **Method: **', form_method
-    '- **Threshold: **', form_threshold
-    '- **Min Frames: **', form_sliding_window
+    if not form_adaptive:
+        '- **Threshold: **', form_threshold
+    '- **Sliding window: **', form_sliding_window, " *frames*"
     '- **Video Duration: **', times[0], " *seconds*"
 
     '**Runtime Durations: **'
     '- **Method: **', times[1], " *seconds*"
-    '- **Merge: **', times[2], " *seconds*"
+    '- **Threshold: **', times[2], " *seconds*"
 
     '**Frame IDs of clip cuts: **'
-    '- **Method: **', frame_ids, " *seconds*"
+    frame_ids
+
+    st.download_button(label="Download the video", data=form_video, file_name='result.mp4', mime='video/mp4')
