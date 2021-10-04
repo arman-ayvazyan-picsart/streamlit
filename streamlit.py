@@ -17,6 +17,7 @@ st.set_page_config(
 
 st.title('Frame Grouping - Interactive 2.0')
 method_list = ["Main", "Light only"]
+form_threshold = -1
 
 s1_col1, s1_col2 = st.columns(2)
 with s1_col1:
@@ -48,7 +49,8 @@ if uploaded_file is not None:
 outVideo = tempfile.NamedTemporaryFile(suffix='.webM')
 
 if st.button('Start the process'):
-    frame_ids, times, frame_diff, groups, meta = video_stream(form_video.name, form_method, form_adaptive, form_sliding_window)
+    frame_ids, times, frame_diff, groups, meta = video_stream(form_video.name, form_method,
+                                                              form_adaptive, form_sliding_window, form_threshold)
     group_extractor(form_video.name, groups, meta[0], meta[1], meta[2], outVideo.name)
     s2_col1, s2_col2 = st.columns(2)
     with s2_col1:

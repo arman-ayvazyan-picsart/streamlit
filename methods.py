@@ -267,13 +267,14 @@ def plot_results(main_array, output_folder, videoname, plot_groups=True, overlay
     plt.savefig(output_folder + videoname + str(plot_title) + " - " + ".jpg")
 
 
-def video_file(video, subfolder, method_name, adaptive, window_size, video_output, verbose):
+def video_file(video, input_path, output_path, method_name, adaptive, window_size, video_output, verbose):
     """
     video_file combines all the method to extract cut points from a video FILE.
         To use in streamlit use the video_stream method.
 
     :param video: Video name
-    :param subfolder: To lookup the video in
+    :param input_path: To lookup the video in
+    :param output_path: To export the video in
     :param method_name: Use ssim by default, but if needed can be changed to lab
     :param adaptive: If true, adaptive thresholding will be used, otherwise minmax thresholding
     :param window_size: sliding window size
@@ -290,11 +291,13 @@ def video_file(video, subfolder, method_name, adaptive, window_size, video_outpu
     if method_name == "Lab":
         conversion = cv2.COLOR_BGR2Lab
         method = lab
+        suffix = "_LAB"
     else:
         conversion = cv2.COLOR_BGR2HSV
         method = ssim
+        suffix = "_SSIM"
 
-    frame_diff, width, height, fps, frames = compute_similarity("./source/" + subfolder + video, conversion, method)
+    frame_diff, width, height, fps, frames = compute_similarity(input_path + video, conversion, method)
     method_time = time.time() - start_time
 
     # Normalizing the array and fixing the first 2 elements
@@ -321,11 +324,11 @@ def video_file(video, subfolder, method_name, adaptive, window_size, video_outpu
 
     # Outputs and details
 
-    suffix = "_ADAPTIVE" if adaptive else "_MINMAX"
+    suffix += "_ADAPTIVE" if adaptive else "_MINMAX"
     if video_output:
         start_time = time.time()
-        group_extractor("./source/" + subfolder + video, groups, width, height, fps,
-                        "./result/" + subfolder + video.rstrip('.mp4/') + suffix + ".mp4")
+        group_extractor(input_path + video, groups, width, height, fps,
+                        output_path + video.rstrip('.mp4/') + suffix + ".mp4")
         extract_time = time.time() - start_time
     else:
         extract_time = 0
@@ -343,7 +346,7 @@ def video_file(video, subfolder, method_name, adaptive, window_size, video_outpu
         plot_results(frame_diff, "./result/" + subfolder, video.rstrip('.mp4') + suffix, False, overlay)
 
 
-def video_stream(video, method_name, adaptive, window_size):
+def video_stream(video, method_name, adaptive, window_size, manual_threshold):
     """
     video_stream is used in streamlit app to provide entry point into program.
 
@@ -376,10 +379,12 @@ def video_stream(video, method_name, adaptive, window_size):
     # Thresholding with corresponing method
     if not adaptive:
         start_time = time.time()
-        max_peak = max(frame_diff)
-        min_peak = min(frame_diff)
-        threshold = (max_peak + min_peak) / 2
-        overlay = threshold  # For plotting the chart
+        if manual_threshold == -1:
+            threshold=manual_threshold
+        else:
+            max_peak = max(frame_diff)
+            min_peak = min(frame_diff)
+            threshold = (max_peak + min_peak) / 2
         td_indices = frame_diff > threshold
         groups[td_indices] = 100
         groups = merge_groups(groups, len(frame_diff), window_size)
@@ -387,7 +392,6 @@ def video_stream(video, method_name, adaptive, window_size):
     else:
         start_time = time.time()
         groups = adaptive_threshold(frame_diff, window_size)
-        overlay = groups  # For plotting the chart
         threhsold_time = time.time() - start_time
 
     # Outputs and details
@@ -396,7 +400,37 @@ def video_stream(video, method_name, adaptive, window_size):
     method_duration = round(method_time, 3)
     thresholding_duration = round(threhsold_time, 3)
 
-    return frame_ids, (video_duration, method_duration, thresholding_duration), frame_diff, groups
+    return frame_ids, (video_duration, method_duration, thresholding_duration), frame_diff, groups, (height, width, fps)
+
+
+def group_extractor_stream(input_video, groups, height, width, fps, output):
+    """
+    group_extractor inserts 1 second whitescreens into cut points and exports a video.
+
+    :param input_video: Input video name
+    :param groups: Cut points
+    :param height: Video frame height
+    :param width: Video frame width
+    :param fps: Video FPS
+    :param output: Output path + new video name
+    :return: returns nothing
+    """
+    video = VideoReader(input_video)
+    whitescreen = np.zeros([height, width, 3], dtype=np.uint8)
+    whitescreen.fill(255)
+
+    fourcc = cv2.VideoWriter_fourcc('V', 'P', '8', '0')
+
+    writer = cv2.VideoWriter(output, fourcc, fps, (width, height))
+
+    for i, frame in enumerate(video):
+        if groups[i] == 100:
+            writer.write(frame)
+        else:
+            for ws in range(fps):
+                writer.write(whitescreen)
+            writer.write(frame)
+    writer.release()
 
 
 if __name__ == '__main__':
@@ -412,6 +446,7 @@ if __name__ == '__main__':
                         help='Export a video in the corresponding folder. If False only frameIDs will be shown')
     args = parser.parse_args()
     video_file("How to use Jade Roller_ Directions_Steps to Use_.mp4",
-               "VideoSet/tutorial/tutorial - continuous flow/", args.method_name,
-               args.adaptive_threshold, args.window_size, args.video_output, args.verbose)
+               "./source/VideoSet/tutorial/tutorial - continuous flow/", args.method_name,
+               "./result/VideoSet/tutorial/tutorial - continuous flow/", args.adaptive_threshold,
+               args.window_size, args.video_output, args.verbose)
     #  video_stream()
