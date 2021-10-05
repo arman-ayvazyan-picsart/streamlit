@@ -346,7 +346,7 @@ def video_file(video, input_path, output_path, method_name, adaptive, window_siz
         plot_results(frame_diff, "./result/" + subfolder, video.rstrip('.mp4') + suffix, False, overlay)
 
 
-def video_stream(video, method_name, adaptive, window_size, manual_threshold):
+def video_stream(video, method_name, adaptive, window_size, manual_threshold=-1):
     """
     video_stream is used in streamlit app to provide entry point into program.
 
@@ -354,6 +354,7 @@ def video_stream(video, method_name, adaptive, window_size, manual_threshold):
     :param method_name: Use ssim by default, but if needed can be changed to lab
     :param adaptive: If true, adaptive thresholding will be used, otherwise minmax thresholding
     :param window_size: sliding window size
+    :param manual_threshold: if adaptive is false and manual_threshold is set, then it will be applied
     :return: nothing
     """
 
@@ -380,7 +381,7 @@ def video_stream(video, method_name, adaptive, window_size, manual_threshold):
     if not adaptive:
         start_time = time.time()
         if manual_threshold == -1:
-            threshold=manual_threshold
+            threshold = manual_threshold
         else:
             max_peak = max(frame_diff)
             min_peak = min(frame_diff)
