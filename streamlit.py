@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from os import listdir
 import streamlit as st
-from methods import video_stream, group_extractor
+from methods import video_stream, group_extractor_stream
 from os.path import isfile, join
 
 
@@ -51,7 +51,7 @@ outVideo = tempfile.NamedTemporaryFile(suffix='.webM')
 if st.button('Start the process'):
     frame_ids, times, frame_diff, groups, meta = video_stream(form_video.name, form_method,
                                                               form_adaptive, form_sliding_window, form_threshold)
-    group_extractor(form_video.name, groups, meta[0], meta[1], meta[2], outVideo.name)
+    group_extractor_stream(form_video.name, groups, meta[0], meta[1], meta[2], outVideo.name)
     s2_col1, s2_col2 = st.columns(2)
     with s2_col1:
         st.subheader('Results:')
@@ -66,8 +66,8 @@ if st.button('Start the process'):
         '- **Method: **', times[1], " *seconds*"
         '- **Threshold: **', times[2], " *seconds*"
 
-        with open(outVideo.name, "rb") as file:
-            st.download_button(label="Download the video", data=file, file_name='result.mp4')
+        #with open(outVideo.name, "rb") as file:
+            #st.download_button(label="Download the video", data=file, file_name='result.mp4')
 
     with s2_col2:
         '**Frame IDs of clip cuts: **'
